@@ -16,6 +16,12 @@ public class ContaBancaria {
     public double getSaldo() {
         return saldo;
     }
+    public TipoConta getTipoConta() {
+        return tipoConta;
+    }
+    public Cliente getCliente() {
+        return cliente;
+    }
 
     public void depositar(double valor) {
         if (valor > 0) {
