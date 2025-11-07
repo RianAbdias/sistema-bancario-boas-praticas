@@ -41,4 +41,18 @@ public class SistemaBanco {
         contas.add(novaConta);
         System.out.println("Conta criada com sucesso");
     }
+
+    public void transferir(double valor, ContaBancaria ContaOrigem, ContaBancaria ContaDestino) {
+        ContaOrigem.sacar(valor);
+        ContaDestino.depositar(valor);
+        System.out.println("Transferência de R$" + valor + " efetuada com sucesso!");
+    }
+
+    public void listarContas() {
+        List<ContaBancaria> contasOrdenadas = new ArrayList<>(contas);
+        Collections.sort(contasOrdenadas, Comparator.comparingDouble(ContaBancaria::getSaldo).reversed());
+        for (ContaBancaria c : contasOrdenadas) {
+            System.out.println("Nome: " + c.getCliente().getNome() + " | Número: "+ c.getNumeroConta() + " | Tipo: " + c.getTipoConta() + " | Saldo: " + c.getSaldo());
+        }
+    }
 }
