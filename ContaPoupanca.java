@@ -6,7 +6,8 @@ public class ContaPoupanca extends ContaBancaria{
 
     @Override
     public void aplicarRendimento(double rendimento) {
-        //logica de rendimento
+        double novoSaldo = getSaldo() * (1+rendimento/100);
+        setSaldo(novoSaldo);
     }
     @Override
     public String stringTipoConta() {
