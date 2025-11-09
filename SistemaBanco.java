@@ -21,15 +21,7 @@ public class SistemaBanco {
         return null;
     }
 
-    public void consultarSaldo(String numeroConta) {
-        ContaBancaria conta = buscarContaPorNumero(numeroConta);
-        if (conta != null) {
-            System.out.println("Saldo da conta " + numeroConta + ": R$" + conta.getSaldo());
-        } else {
-            System.out.println("Conta não encontrada!");
-        }
-    }
-
+    
     public void adicionarCliente(String nome, String cpf) {
         if (buscarClientePorCpf(cpf) != null) {
             System.out.println("Erro: Cliente com esse CPF já existe!");
@@ -41,10 +33,6 @@ public class SistemaBanco {
         System.out.println("Cliente cadastrado com sucesso: " + nome);
     }
     
-    public void criarConta(String numeroConta, TipoConta tipoConta, String cpfCliente) {
-        criarConta(numeroConta, tipoConta, cpfCliente, 0.0);
-    }
-
     public void criarConta(String numeroConta, TipoConta tipoConta, String cpfCliente, double saldoInicial) {
         Cliente clienteEncontrado = buscarClientePorCpf(cpfCliente);
         
@@ -62,37 +50,55 @@ public class SistemaBanco {
         System.out.println("Conta criada com sucesso");
     }
 
+
+    public void sacar(String numeroConta, double valor) {
+    ContaBancaria conta = buscarContaPorNumero(numeroConta);
+    if (conta == null) {
+        System.out.println("Erro: Conta não encontrada!");
+        return;
+    }
+
+    if (conta.sacar(valor)) {
+        System.out.println("Saque realizado com sucesso.");
+    } else {
+        System.out.println("Erro: valor inválido ou saldo insuficiente.");
+    }
+    }
     public void depositar(String numeroConta, double valor) {
         ContaBancaria conta = buscarContaPorNumero(numeroConta);
         if (conta == null) {
             System.out.println("Erro: Conta não encontrada!");
             return;
         }
-        conta.depositar(valor);
-    }
-    public void sacar(String numeroConta, double valor) {
-        ContaBancaria conta = buscarContaPorNumero(numeroConta);
-        if (conta == null) {
-            System.out.println("Erro: Conta não encontrada!");
-            return;
+
+        if (conta.depositar(valor)) {
+            System.out.println("Depósito realizado com sucesso.");
+        } else {
+            System.out.println("Erro: valor inválido para depósito.");
         }
-        conta.sacar(valor);
     }
     public void transferir(String numeroContaOrigem, String numeroContaDestino, double valor) {
-        ContaBancaria contaOrigem = buscarContaPorNumero(numeroContaOrigem);
-        if (contaOrigem == null) {
-            System.out.println("Erro: Conta de origem não encontrada!");
-            return;
-        }
-        ContaBancaria contaDestino = buscarContaPorNumero(numeroContaDestino);
-        if (contaDestino == null) {
-            System.out.println("Erro: Conta de destino não encontrada!");
-            return;
-        }
-        contaOrigem.sacar(valor);
-        contaDestino.depositar(valor);
-    }
+        ContaBancaria origem = buscarContaPorNumero(numeroContaOrigem);
+        ContaBancaria destino = buscarContaPorNumero(numeroContaDestino);
 
+        if (origem == null || destino == null) {
+            System.out.println("Erro: Conta de origem ou destino não encontrada!");
+            return;
+        }
+
+        if (!origem.sacar(valor)) {
+            System.out.println("Erro: valor inválido ou saldo insuficiente na conta de origem.");
+            return;
+        }
+
+        if (!destino.depositar(valor)) {
+            origem.depositar(valor);
+            System.out.println("Erro: não foi possível depositar na conta de destino. Operação cancelada.");
+            return;
+        }
+
+        System.out.println("Transferência realizada com sucesso.");
+    }
     public void aplicarRendimentoPoupancas(double rendimento) {
         for (ContaBancaria conta : contas) {    
             if (conta.getTipoConta() == TipoConta.POUPANCA) {
@@ -101,11 +107,20 @@ public class SistemaBanco {
         }
     }
 
+
+    public void consultarSaldo(String numeroConta) {
+        ContaBancaria conta = buscarContaPorNumero(numeroConta);
+        if (conta != null) {
+            System.out.println("Saldo da conta " + numeroConta + ": R$" + conta.getSaldo());
+        } else {
+            System.out.println("Conta não encontrada!");
+        }
+    }
     public void listarContas() {
         List<ContaBancaria> contasOrdenadas = new ArrayList<>(contas);
         Collections.sort(contasOrdenadas, Comparator.comparingDouble(ContaBancaria::getSaldo).reversed());
         for (ContaBancaria c : contasOrdenadas) {
-            System.out.println("Nome: " + c.getCliente().getNome() + " | Número: "+ c.getNumeroConta() + " | Tipo: " + c.getTipoConta() + " | Saldo: " + c.getSaldo());
+            System.out.println("Nome: " + c.getNomeCliente() + " | Número: "+ c.getNumeroConta() + " | Tipo: " + c.getTipoConta() + " | Saldo: " + c.getSaldo());
         }
     }
     public void relatorioDeConsolidacao() {

@@ -41,10 +41,12 @@ public class Main {
                     String tipo = input.nextLine();
                     System.out.print("Digite o CPF do cliente: ");
                     String cpfCliente = input.nextLine();
+                    System.out.println("Digite o saldo inicial:");
+                    Double saldoInicial = input.nextDouble();
                     
                     try {
                         TipoConta tipoConta = TipoConta.fromString(tipo);
-                        banco.criarConta(numero, tipoConta, cpfCliente);
+                        banco.criarConta(numero, tipoConta, cpfCliente, saldoInicial);
                     } catch (IllegalArgumentException e) {
                         System.out.println("Tipo de conta inválido! Use 'Corrente' ou 'Poupança'.");
                     }

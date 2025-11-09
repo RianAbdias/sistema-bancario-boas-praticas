@@ -16,34 +16,28 @@ public class ContaBancaria {
     public double getSaldo() {
         return saldo;
     }
-    public void setSaldo(double novoSaldo) {
-        saldo = novoSaldo;
-    }
     public TipoConta getTipoConta() {
         return tipoConta;
     }
-    public Cliente getCliente() {
-        return cliente;
+    public String getNomeCliente() {
+        return cliente.getNome();
     }
 
-    void depositar(double valor) {
-        if (valor > 0) {
-            saldo += valor;
-            System.out.println("Depósito realizado.");
-        } else {
-            System.out.println("Valor inválido.");
-        }
+    public void setSaldo(double novoSaldo) {
+        saldo = novoSaldo;
     }
-    void sacar(double valor) {
-        if (valor > 0) {
-            if (valor <= saldo) {
-                saldo -= valor;
-                System.out.println("Saque realizado.");
-            } else {
-                System.out.println("Saldo insuficiente.");
-            }
-        } else {
-            System.out.println("Valor inválido.");
-        }
+
+    public boolean sacar(double valor) {
+    if (valor <= 0) return false;
+    if (valor > saldo) return false;
+    saldo -= valor;
+    return true;
+    }
+
+    public boolean depositar(double valor) {
+        if (valor <= 0) return false;
+        saldo += valor;
+        return true;
     }
 }
+
