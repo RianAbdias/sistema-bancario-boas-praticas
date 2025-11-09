@@ -1,8 +1,8 @@
 import java.util.*;
 
 public class SistemaBanco {
-    private final List<Cliente> clientes = new ArrayList<>();
-    private final List<ContaBancaria> contas = new ArrayList<>();
+    private List<Cliente> clientes = new ArrayList<>();
+    private List<ContaBancaria> contas = new ArrayList<>();
 
     public ContaBancaria buscarContaPorNumero(String numeroConta) {
         for (ContaBancaria conta : contas) {
@@ -21,18 +21,31 @@ public class SistemaBanco {
         return null;
     }
 
-    
+    public void consultarSaldo(String numeroConta) {
+        ContaBancaria conta = buscarContaPorNumero(numeroConta);
+        if (conta != null) {
+            System.out.println("Saldo da conta " + numeroConta + ": R$" + conta.getSaldo());
+        } else {
+            System.out.println("Conta não encontrada!");
+        }
+    }
+
     public void adicionarCliente(String nome, String cpf) {
         if (buscarClientePorCpf(cpf) != null) {
             System.out.println("Erro: Cliente com esse CPF já existe!");
             return;
         }
 
-        clientes.add(new Cliente(nome, cpf));
+        Cliente novoCliente = new Cliente(nome, cpf);
+        clientes.add(novoCliente);
         System.out.println("Cliente cadastrado com sucesso: " + nome);
     }
     
-    public void criarConta(String numeroConta, TipoConta tipoConta, String cpfCliente, double saldoInicial) {
+    public void criarConta(String numeroConta, String cpfCliente, String tipoConta) {
+        criarConta(numeroConta, cpfCliente, tipoConta, 0.0);
+    }
+
+    public void criarConta(String numeroConta, String cpfCliente, String tipoConta, double saldoInicial) {
         Cliente clienteEncontrado = buscarClientePorCpf(cpfCliente);
         
         if (clienteEncontrado == null) {
@@ -44,10 +57,24 @@ public class SistemaBanco {
             return;
         }
 
-        contas.add(new ContaBancaria(numeroConta, tipoConta, clienteEncontrado, saldoInicial));
+        ContaBancaria novaConta;
+
+        switch (tipoConta.trim().toLowerCase()) {
+            case "corrente":
+                novaConta = new ContaCorrente(numeroConta, clienteEncontrado, saldoInicial);
+                break;
+            case "poupança":
+            case "poupanca":
+                novaConta = new ContaPoupanca(numeroConta, clienteEncontrado, saldoInicial);
+                break;
+            default:
+                System.out.println("Erro: Tipo de conta inválido!");
+                return;
+        }
+
+        contas.add(novaConta);
         System.out.println("Conta criada com sucesso");
     }
-
 
     public void sacar(String numeroConta, double valor) {
     ContaBancaria conta = buscarContaPorNumero(numeroConta);
@@ -97,53 +124,44 @@ public class SistemaBanco {
 
         System.out.println("Transferência realizada com sucesso.");
     }
+
     public void aplicarRendimentoPoupancas(double rendimento) {
-        for (ContaBancaria conta : contas) {    
-            if (conta.getTipoConta() == TipoConta.POUPANCA) {
-                conta.setSaldo(conta.getSaldo() * (rendimento/100.0 + 1));
-            }
-        }
+
     }
 
-    public void consultarSaldo(String numeroConta) {
-        ContaBancaria conta = buscarContaPorNumero(numeroConta);
-        if (conta != null) {
-            System.out.println("Saldo da conta " + numeroConta + ": R$" + conta.getSaldo());
-        } else {
-            System.out.println("Conta não encontrada!");
-        }
-    }
     public void listarContas() {
-        if (contas.isEmpty()) {
-            System.out.println("Nenhuma conta cadastrada.");
-            return;
+        List<ContaBancaria> contasOrdenadas = new ArrayList<>(contas);
+        Collections.sort(contasOrdenadas, Comparator.comparingDouble(ContaBancaria::getSaldo).reversed());
+        for (ContaBancaria c : contasOrdenadas) {
+            System.out.println("Nome: " + c.getCliente().getNome() + " | Número: "+ c.getNumeroConta() + " | Tipo: " + c.stringTipoConta() + " | Saldo: " + c.getSaldo());
         }
-
-        contas.stream()
-            .sorted(Comparator.comparingDouble(ContaBancaria::getSaldo).reversed())
-            .forEach(c -> System.out.printf(
-                "Nome: %s | Número: %s | Tipo: %s | Saldo: R$%.2f%n",
-                c.getNomeCliente(), c.getNumeroConta(), c.getTipoConta(), c.getSaldo()
-            ));
     }
     public void relatorioDeConsolidacao() {
-        double saldoTotalPoucancas = 0;
-        int quantidadePoupancas = 0;
-        double saldoTotalCorrentes = 0;
-        int quantidadeCorrentes = 0;
+        Map<String, double[]> relatorio = new HashMap<>();
 
-        for (ContaBancaria c : contas) {
-            if (c.getTipoConta() == TipoConta.POUPANCA) {
-                saldoTotalPoucancas += c.getSaldo();
-                quantidadePoupancas++;
-            } else if (c.getTipoConta() == TipoConta.CORRENTE) {
-                saldoTotalCorrentes += c.getSaldo();
-                quantidadeCorrentes++;
-            }
+        for (ContaBancaria conta : contas) {
+            String tipo = conta.stringTipoConta();
+
+            relatorio.putIfAbsent(tipo, new double[2]);
+            double[] valores = relatorio.get(tipo);
+
+            valores[0]++;
+            valores[1] += conta.getSaldo();
         }
+
+        double saldoGeral = 0;
+        int totalContas = 0;
+
         System.out.println("Relatório de Consolidação:");
-        System.out.println("Contas Poupança - Quantidade: " + quantidadePoupancas + ", Saldo Total: R$" + saldoTotalPoucancas);
-        System.out.println("Contas Corrente - Quantidade: " + quantidadeCorrentes + ", Saldo Total: R$" + saldoTotalCorrentes);
-        System.out.println("Quantidade de contas geral: " + (quantidadePoupancas + quantidadeCorrentes) + ", Saldo Total Geral: R$" + (saldoTotalPoucancas + saldoTotalCorrentes));
+        for (Map.Entry<String, double[]> entry : relatorio.entrySet()) {
+            String tipo = entry.getKey();
+            double[] v = entry.getValue();
+            System.out.println("Tipo: " + tipo + " - Quantidade: " + (int)v[0] + ", Saldo Total: R$" + v[1]);
+            saldoGeral += v[1];
+            totalContas += v[0];
+        }
+
+        System.out.println("Total de contas: " + totalContas + ", Saldo Geral: R$" + saldoGeral);
     }
+
 }
