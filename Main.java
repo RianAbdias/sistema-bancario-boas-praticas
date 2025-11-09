@@ -9,10 +9,10 @@ public class Main {
         while (true) {
             System.out.println("=== Sistema Bancário ===\n");
             System.out.println("Escolha uma opção: \n" + 
-                        "(1)Cadastrar cliente (2)Criar conta \n" + 
-                        "(3)Depositar (4)Sacar (5)Transferir (6)Consultar saldo\n" +
-                        "(7)Aplicar rendimento (8)Listar contas (9)Relatorio de consolidação\n" +
-                        "(0)Sair \n");
+                        "|| (1)Cadastrar cliente   |   (2)Criar conta   |   (3)Depositar                ||\n" + 
+                        "||       (4)Sacar         |   (5)Transferir    |  (6)Consultar saldo           ||\n" +
+                        "|| (7)Aplicar rendimento  |  (8)Listar contas  |  (9)Relatorio de consolidação ||\n" +
+                        "||                               (0)Sair                                       || \n");
             
             int opcao = -1;
             try {
