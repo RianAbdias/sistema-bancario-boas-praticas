@@ -126,8 +126,14 @@ public class SistemaBanco {
     }
 
     public void aplicarRendimentoPoupancas(double rendimento) {
-
+        for (ContaBancaria conta : contas) {
+            if (conta instanceof ContaPoupanca) {
+                ((ContaPoupanca) conta).aplicarRendimento(rendimento);
+            }
+        }
+        System.out.println("Rendimento aplicado às contas poupança com taxa de " + rendimento + "%.");
     }
+
 
     public void listarContas() {
         List<ContaBancaria> contasOrdenadas = new ArrayList<>(contas);
