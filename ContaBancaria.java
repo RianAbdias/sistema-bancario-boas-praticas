@@ -16,6 +16,9 @@ public class ContaBancaria {
     public double getSaldo() {
         return saldo;
     }
+    public void setSaldo(double novoSaldo) {
+        saldo = novoSaldo;
+    }
     public TipoConta getTipoConta() {
         return tipoConta;
     }
@@ -23,14 +26,22 @@ public class ContaBancaria {
         return cliente;
     }
 
-    public void depositar(double valor) {
+    void depositar(double valor) {
         if (valor > 0) {
             saldo += valor;
+        } else {
+            System.out.println("Valor inválido.");
         }
     }
-    public void sacar(double valor) {
-        if (valor > 0 && valor <= saldo) {
-            saldo -= valor;
+    void sacar(double valor) {
+        if (valor > 0) {
+            if (valor <= saldo) {
+                saldo -= valor;
+            } else {
+                System.out.println("Saldo insuficiente.");
+            }
+        } else {
+            System.out.println("Valor inválido.");
         }
     }
 }
