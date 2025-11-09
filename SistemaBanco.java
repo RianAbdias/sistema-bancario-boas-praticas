@@ -1,8 +1,8 @@
 import java.util.*;
 
 public class SistemaBanco {
-    private List<Cliente> clientes = new ArrayList<>();
-    private List<ContaBancaria> contas = new ArrayList<>();
+    private final List<Cliente> clientes = new ArrayList<>();
+    private final List<ContaBancaria> contas = new ArrayList<>();
 
     public ContaBancaria buscarContaPorNumero(String numeroConta) {
         for (ContaBancaria conta : contas) {
@@ -21,15 +21,6 @@ public class SistemaBanco {
         return null;
     }
 
-    public void consultarSaldo(String numeroConta) {
-        ContaBancaria conta = buscarContaPorNumero(numeroConta);
-        if (conta != null) {
-            System.out.println("Saldo da conta " + numeroConta + ": R$" + conta.getSaldo());
-        } else {
-            System.out.println("Conta não encontrada!");
-        }
-    }
-
     
     public void adicionarCliente(String nome, String cpf) {
         if (buscarClientePorCpf(cpf) != null) {
@@ -37,8 +28,7 @@ public class SistemaBanco {
             return;
         }
 
-        Cliente novoCliente = new Cliente(nome, cpf);
-        clientes.add(novoCliente);
+        clientes.add(new Cliente(nome, cpf));
         System.out.println("Cliente cadastrado com sucesso: " + nome);
     }
     public void criarConta(String numeroConta, TipoConta tipoConta, String cpfCliente) {
@@ -53,8 +43,7 @@ public class SistemaBanco {
             return;
         }
 
-        ContaBancaria novaConta = new ContaBancaria(numeroConta, tipoConta, clienteEncontrado);
-        contas.add(novaConta);
+        contas.add(new ContaBancaria(numeroConta, tipoConta, clienteEncontrado));
         System.out.println("Conta criada com sucesso");
     }
 
@@ -107,7 +96,6 @@ public class SistemaBanco {
 
         System.out.println("Transferência realizada com sucesso.");
     }
-
     public void aplicarRendimentoPoupancas(double rendimento) {
         for (ContaBancaria conta : contas) {    
             if (conta.getTipoConta() == TipoConta.POUPANCA) {
@@ -116,11 +104,19 @@ public class SistemaBanco {
         }
     }
 
+    public void consultarSaldo(String numeroConta) {
+        ContaBancaria conta = buscarContaPorNumero(numeroConta);
+        if (conta != null) {
+            System.out.println("Saldo da conta " + numeroConta + ": R$" + conta.getSaldo());
+        } else {
+            System.out.println("Conta não encontrada!");
+        }
+    }
     public void listarContas() {
         List<ContaBancaria> contasOrdenadas = new ArrayList<>(contas);
         Collections.sort(contasOrdenadas, Comparator.comparingDouble(ContaBancaria::getSaldo).reversed());
         for (ContaBancaria c : contasOrdenadas) {
-            System.out.println("Nome: " + c.getCliente().getNome() + " | Número: "+ c.getNumeroConta() + " | Tipo: " + c.getTipoConta() + " | Saldo: " + c.getSaldo());
+            System.out.println("Nome: " + c.getNomeCliente() + " | Número: "+ c.getNumeroConta() + " | Tipo: " + c.getTipoConta() + " | Saldo: " + c.getSaldo());
         }
     }
     public void relatorioDeConsolidacao() {

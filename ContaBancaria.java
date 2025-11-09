@@ -16,14 +16,18 @@ public class ContaBancaria {
     public double getSaldo() {
         return saldo;
     }
-    public void setSaldo(double novoSaldo) {
-        saldo = novoSaldo;
-    }
     public TipoConta getTipoConta() {
         return tipoConta;
     }
     public Cliente getCliente() {
         return cliente;
+    }
+    public String getNomeCliente() {
+        return cliente.getNome();
+    }
+
+    public void setSaldo(double novoSaldo) {
+        saldo = novoSaldo;
     }
 
     public boolean sacar(double valor) {
