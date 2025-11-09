@@ -1,13 +1,18 @@
 public enum TipoConta {
-    CORRENTE("Conta Corrente"), POUPANCA("Conta Poupança");
+    CORRENTE, 
+    POUPANCA;
 
-    private final String descricao;
-
-    TipoConta(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public String getDescricao() {
-        return descricao;
+    public static TipoConta fromString(String texto) {
+        if (texto == null) return null;
+        
+        switch (texto.trim().toLowerCase()) {
+            case "corrente":
+                return CORRENTE;
+            case "poupança":
+            case "poupanca":
+                return POUPANCA;
+            default:
+                throw new IllegalArgumentException("Tipo de conta inválido: " + texto);
+        }
     }
 }

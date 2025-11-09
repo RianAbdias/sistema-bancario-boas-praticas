@@ -4,12 +4,36 @@ public class SistemaBanco {
     private List<Cliente> clientes = new ArrayList<>();
     private List<ContaBancaria> contas = new ArrayList<>();
 
-    public void adicionarCliente(String nome, String cpf) {
-        for (Cliente c : clientes) {
-            if (c.getCpf().equals(cpf)) {
-                System.out.println("Erro: Um cliente com esse CPF já existe!");
-                return;
+    public ContaBancaria buscarContaPorNumero(String numeroConta) {
+        for (ContaBancaria conta : contas) {
+            if (conta.getNumeroConta().equals(numeroConta)) {
+                return conta;
             }
+        }
+        return null;
+    }
+    public Cliente buscarClientePorCpf(String cpf) {
+        for (Cliente cliente : clientes) {
+            if (cliente.getCpf().equals(cpf)) {
+                return cliente;
+            }
+        }
+        return null;
+    }
+
+    public void consultarSaldo(String numeroConta) {
+        ContaBancaria conta = buscarContaPorNumero(numeroConta);
+        if (conta != null) {
+            System.out.println("Saldo da conta " + numeroConta + ": R$" + conta.getSaldo());
+        } else {
+            System.out.println("Conta não encontrada!");
+        }
+    }
+
+    public void adicionarCliente(String nome, String cpf) {
+        if (buscarClientePorCpf(cpf) != null) {
+            System.out.println("Erro: Cliente com esse CPF já existe!");
+            return;
         }
 
         Cliente novoCliente = new Cliente(nome, cpf);
@@ -18,23 +42,15 @@ public class SistemaBanco {
     }
 
     public void criarConta(String numeroConta, TipoConta tipoConta, String cpfCliente) {
-        Cliente clienteEncontrado = null;
-        for (Cliente c : clientes) {
-            if (c.getCpf().equals(cpfCliente)) {
-                clienteEncontrado = c;
-                break;
-            }
-        }
-
+        Cliente clienteEncontrado = buscarClientePorCpf(cpfCliente);
+        
         if (clienteEncontrado == null) {
             System.out.println("Erro: Cliente com esse CPF não encontrado!");
             return;
         }
-        for (ContaBancaria conta : contas) {
-            if (conta.getNumeroConta().equals(numeroConta)) {
-                System.out.println("Erro: Conta com número " + numeroConta + " já existe!");
-                return;
-            }
+        if (buscarContaPorNumero(numeroConta) != null) {
+            System.out.println("Erro: Conta com esse número já existe!");
+            return;
         }
 
         ContaBancaria novaConta = new ContaBancaria(numeroConta, tipoConta, clienteEncontrado);
@@ -42,20 +58,43 @@ public class SistemaBanco {
         System.out.println("Conta criada com sucesso");
     }
 
-    public void depositar(ContaBancaria conta, double valor) {
+    public void depositar(String numeroConta, double valor) {
+        ContaBancaria conta = buscarContaPorNumero(numeroConta);
+        if (conta == null) {
+            System.out.println("Erro: Conta não encontrada!");
+            return;
+        }
         conta.depositar(valor);
-        System.out.println("Depósito efetuado com sucesso.");
     }
-
-    public void sacar(ContaBancaria conta, double valor) {
+    public void sacar(String numeroConta, double valor) {
+        ContaBancaria conta = buscarContaPorNumero(numeroConta);
+        if (conta == null) {
+            System.out.println("Erro: Conta não encontrada!");
+            return;
+        }
         conta.sacar(valor);
-        System.out.println("Saque efetuado com sucesso.");
+    }
+    public void transferir(String numeroContaOrigem, String numeroContaDestino, double valor) {
+        ContaBancaria contaOrigem = buscarContaPorNumero(numeroContaOrigem);
+        if (contaOrigem == null) {
+            System.out.println("Erro: Conta de origem não encontrada!");
+            return;
+        }
+        ContaBancaria contaDestino = buscarContaPorNumero(numeroContaDestino);
+        if (contaDestino == null) {
+            System.out.println("Erro: Conta de destino não encontrada!");
+            return;
+        }
+        contaOrigem.sacar(valor);
+        contaDestino.depositar(valor);
     }
 
-    public void transferir(double valor, ContaBancaria ContaOrigem, ContaBancaria ContaDestino) {
-        ContaOrigem.sacar(valor);
-        ContaDestino.depositar(valor);
-        System.out.println("Transferência de R$" + valor + " efetuada com sucesso!");
+    public void aplicarRendimentoPoupancas(double rendimento) {
+        for (ContaBancaria conta : contas) {    
+            if (conta.getTipoConta() == TipoConta.POUPANCA) {
+                conta.setSaldo(conta.getSaldo() * (rendimento/100.0 + 1));
+            }
+        }
     }
 
     public void listarContas() {
@@ -64,5 +103,25 @@ public class SistemaBanco {
         for (ContaBancaria c : contasOrdenadas) {
             System.out.println("Nome: " + c.getCliente().getNome() + " | Número: "+ c.getNumeroConta() + " | Tipo: " + c.getTipoConta() + " | Saldo: " + c.getSaldo());
         }
+    }
+    public void relatorioDeConsolidacao() {
+        double saldoTotalPoucancas = 0;
+        int quantidadePoupancas = 0;
+        double saldoTotalCorrentes = 0;
+        int quantidadeCorrentes = 0;
+
+        for (ContaBancaria c : contas) {
+            if (c.getTipoConta() == TipoConta.POUPANCA) {
+                saldoTotalPoucancas += c.getSaldo();
+                quantidadePoupancas++;
+            } else if (c.getTipoConta() == TipoConta.CORRENTE) {
+                saldoTotalCorrentes += c.getSaldo();
+                quantidadeCorrentes++;
+            }
+        }
+        System.out.println("Relatório de Consolidação:");
+        System.out.println("Contas Poupança - Quantidade: " + quantidadePoupancas + ", Saldo Total: R$" + saldoTotalPoucancas);
+        System.out.println("Contas Corrente - Quantidade: " + quantidadeCorrentes + ", Saldo Total: R$" + saldoTotalCorrentes);
+        System.out.println("Quantidade de contas geral: " + (quantidadePoupancas + quantidadeCorrentes) + ", Saldo Total Geral: R$" + (saldoTotalPoucancas + saldoTotalCorrentes));
     }
 }
