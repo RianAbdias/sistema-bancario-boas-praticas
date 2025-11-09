@@ -42,6 +42,16 @@ public class SistemaBanco {
         System.out.println("Conta criada com sucesso");
     }
 
+    public void depositar(ContaBancaria conta, double valor) {
+        conta.depositar(valor);
+        System.out.println("Depósito efetuado com sucesso.");
+    }
+
+    public void sacar(ContaBancaria conta, double valor) {
+        conta.sacar(valor);
+        System.out.println("Saque efetuado com sucesso.");
+    }
+
     public void transferir(double valor, ContaBancaria ContaOrigem, ContaBancaria ContaDestino) {
         ContaOrigem.sacar(valor);
         ContaDestino.depositar(valor);
