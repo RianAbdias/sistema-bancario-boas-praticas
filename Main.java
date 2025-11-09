@@ -12,7 +12,7 @@ public class Main {
                         "(1)Cadastrar cliente (2)Criar conta \n" + 
                         "(3)Depositar (4)Sacar (5)Transferir (6)Consultar saldo\n" +
                         "(7)Aplicar rendimento (8)Listar contas (9)Relatorio de consolidação\n" +
-                        "(9)Sair \n");
+                        "(0)Sair \n");
             
             int opcao = -1;
             try {
