@@ -26,24 +26,17 @@ public class ContaBancaria {
         return cliente;
     }
 
-    void depositar(double valor) {
-        if (valor > 0) {
-            saldo += valor;
-            System.out.println("Depósito realizado.");
-        } else {
-            System.out.println("Valor inválido.");
-        }
+    public boolean sacar(double valor) {
+    if (valor <= 0) return false;
+    if (valor > saldo) return false;
+    saldo -= valor;
+    return true;
     }
-    void sacar(double valor) {
-        if (valor > 0) {
-            if (valor <= saldo) {
-                saldo -= valor;
-                System.out.println("Saque realizado.");
-            } else {
-                System.out.println("Saldo insuficiente.");
-            }
-        } else {
-            System.out.println("Valor inválido.");
-        }
+
+    public boolean depositar(double valor) {
+        if (valor <= 0) return false;
+        saldo += valor;
+        return true;
     }
 }
+
