@@ -1,12 +1,10 @@
-public class ContaBancaria {
+public abstract class ContaBancaria {
     private String numeroConta;
     private double saldo;
-    private TipoConta tipoConta;
     private Cliente cliente;
     
-    public ContaBancaria(String numeroConta, TipoConta tipo, Cliente cliente, double saldoInicial) {
+    public ContaBancaria(String numeroConta, Cliente cliente, double saldoInicial) {
         this.numeroConta = numeroConta;
-        this.tipoConta = tipo;
         this.cliente = cliente;
         this.saldo = saldoInicial;
     }
@@ -16,17 +14,15 @@ public class ContaBancaria {
     public double getSaldo() {
         return saldo;
     }
-    public TipoConta getTipoConta() {
-        return tipoConta;
+    public void setSaldo(double novoSaldo) {
+        saldo = novoSaldo;
     }
-    public String getNomeCliente() {
-        return cliente.getNome();
-    }
-
-    public void setSaldo(double saldo) {
-        this.saldo = saldo;
+    public Cliente getCliente() {
+        return cliente;
     }
 
+    abstract void aplicarRendimento(double rendimento);
+    abstract String stringTipoConta();
 
     public boolean sacar(double valor) {
     if (valor <= 0) return false;
@@ -41,4 +37,3 @@ public class ContaBancaria {
         return true;
     }
 }
-
