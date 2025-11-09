@@ -40,8 +40,12 @@ public class SistemaBanco {
         clientes.add(novoCliente);
         System.out.println("Cliente cadastrado com sucesso: " + nome);
     }
-
+    
     public void criarConta(String numeroConta, TipoConta tipoConta, String cpfCliente) {
+        criarConta(numeroConta, tipoConta, cpfCliente, 0.0);
+    }
+
+    public void criarConta(String numeroConta, TipoConta tipoConta, String cpfCliente, double saldoInicial) {
         Cliente clienteEncontrado = buscarClientePorCpf(cpfCliente);
         
         if (clienteEncontrado == null) {
@@ -53,7 +57,7 @@ public class SistemaBanco {
             return;
         }
 
-        ContaBancaria novaConta = new ContaBancaria(numeroConta, tipoConta, clienteEncontrado);
+        ContaBancaria novaConta = new ContaBancaria(numeroConta, tipoConta, clienteEncontrado, saldoInicial);
         contas.add(novaConta);
         System.out.println("Conta criada com sucesso");
     }
