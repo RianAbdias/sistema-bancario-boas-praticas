@@ -117,11 +117,17 @@ public class SistemaBanco {
         }
     }
     public void listarContas() {
-        List<ContaBancaria> contasOrdenadas = new ArrayList<>(contas);
-        Collections.sort(contasOrdenadas, Comparator.comparingDouble(ContaBancaria::getSaldo).reversed());
-        for (ContaBancaria c : contasOrdenadas) {
-            System.out.println("Nome: " + c.getNomeCliente() + " | Número: "+ c.getNumeroConta() + " | Tipo: " + c.getTipoConta() + " | Saldo: " + c.getSaldo());
+        if (contas.isEmpty()) {
+            System.out.println("Nenhuma conta cadastrada.");
+            return;
         }
+
+        contas.stream()
+            .sorted(Comparator.comparingDouble(ContaBancaria::getSaldo).reversed())
+            .forEach(c -> System.out.printf(
+                "Nome: %s | Número: %s | Tipo: %s | Saldo: R$%.2f%n",
+                c.getNomeCliente(), c.getNumeroConta(), c.getTipoConta(), c.getSaldo()
+            ));
     }
     public void relatorioDeConsolidacao() {
         double saldoTotalPoucancas = 0;
