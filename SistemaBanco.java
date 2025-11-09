@@ -1,8 +1,8 @@
 import java.util.*;
 
 public class SistemaBanco {
-    private List<Cliente> clientes = new ArrayList<>();
-    private List<ContaBancaria> contas = new ArrayList<>();
+    private final List<Cliente> clientes = new ArrayList<>();
+    private final List<ContaBancaria> contas = new ArrayList<>();
 
     public ContaBancaria buscarContaPorNumero(String numeroConta) {
         for (ContaBancaria conta : contas) {
@@ -28,8 +28,7 @@ public class SistemaBanco {
             return;
         }
 
-        Cliente novoCliente = new Cliente(nome, cpf);
-        clientes.add(novoCliente);
+        clientes.add(new Cliente(nome, cpf));
         System.out.println("Cliente cadastrado com sucesso: " + nome);
     }
     
@@ -45,8 +44,7 @@ public class SistemaBanco {
             return;
         }
 
-        ContaBancaria novaConta = new ContaBancaria(numeroConta, tipoConta, clienteEncontrado, saldoInicial);
-        contas.add(novaConta);
+        contas.add(new ContaBancaria(numeroConta, tipoConta, clienteEncontrado, saldoInicial));
         System.out.println("Conta criada com sucesso");
     }
 
@@ -106,7 +104,6 @@ public class SistemaBanco {
             }
         }
     }
-
 
     public void consultarSaldo(String numeroConta) {
         ContaBancaria conta = buscarContaPorNumero(numeroConta);

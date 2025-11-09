@@ -23,9 +23,10 @@ public class ContaBancaria {
         return cliente.getNome();
     }
 
-    public void setSaldo(double novoSaldo) {
-        saldo = novoSaldo;
+    public void setSaldo(double saldo) {
+        this.saldo = saldo;
     }
+
 
     public boolean sacar(double valor) {
     if (valor <= 0) return false;
