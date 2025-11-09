@@ -4,11 +4,11 @@ public class ContaBancaria {
     private TipoConta tipoConta;
     private Cliente cliente;
     
-    public ContaBancaria(String numeroConta, TipoConta tipo, Cliente cliente) {
+    public ContaBancaria(String numeroConta, TipoConta tipo, Cliente cliente, double saldoInicial) {
         this.numeroConta = numeroConta;
         this.tipoConta = tipo;
         this.cliente = cliente;
-        this.saldo = 0.0;
+        this.saldo = saldoInicial;
     }
     public String getNumeroConta() {
         return numeroConta;
